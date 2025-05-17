@@ -1,0 +1,50 @@
+// DOM Elements
+const todoInput = document.getElementById("todo-input");
+const addBtn = document.getElementById("add-btn");
+const todoList = document.getElementById("todo-list");
+
+// Load saved todos from localStorage
+document.addEventListener("DOMContentLoaded", () => {
+  const savedTodos = JSON.parse(localStorage.getItem("todos")) || [];
+  savedTodos.forEach(todo => addTodoToDOM(todo));
+});
+
+// Add Todo
+addBtn.addEventListener("click", () => {
+  const todoText = todoInput.value.trim();
+  if (todoText) {
+    addTodoToDOM(todoText);
+    saveTodoToStorage(todoText);
+    todoInput.value = "";
+  }
+});
+
+// Add Todo to DOM
+function addTodoToDOM(todoText) {
+  const li = document.createElement("li");
+  li.innerHTML = `
+    <span>${todoText}</span>
+    <button class="delete-btn">Delete</button>
+  `;
+  todoList.appendChild(li);
+
+  // Delete Todo
+  li.querySelector(".delete-btn").addEventListener("click", () => {
+    li.remove();
+    removeTodoFromStorage(todoText);
+  });
+}
+
+// Save to localStorage
+function saveTodoToStorage(todoText) {
+  const todos = JSON.parse(localStorage.getItem("todos")) || [];
+  todos.push(todoText);
+  localStorage.setItem("todos", JSON.stringify(todos));
+}
+
+// Remove from localStorage
+function removeTodoFromStorage(todoText) {
+  let todos = JSON.parse(localStorage.getItem("todos")) || [];
+  todos = todos.filter(todo => todo !== todoText);
+  localStorage.setItem("todos", JSON.stringify(todos));
+}
